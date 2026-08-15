@@ -1,4 +1,4 @@
-import { LOGGING_PREFIX, SETTINGS_IDS } from "./constants"
+import { LOGGING_PREFIX, SETTINGS_IDS } from "./constants.ts"
 
 export type DebugSettingReader = (id: string) => boolean
 

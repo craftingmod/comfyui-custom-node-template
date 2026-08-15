@@ -7,7 +7,7 @@ import {
   FRONTEND_ROOT,
   OUTPUT_DIRECTORY,
   buildConfig,
-} from "../build"
+} from "../build.ts"
 
 describe("Bun build config", () => {
   it("builds the frontend entry into the repository dist directory", () => {

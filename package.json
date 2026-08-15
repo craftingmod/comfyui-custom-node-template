@@ -15,6 +15,8 @@
   "type": "module",
   "scripts": {
     "dev": "bun run typecheck && bun frontend/dev.ts",
+    "deploy:dev": "bun run build && bun scripts/deploy-dev.ts",
+    "deploy:local": "bun scripts/deploy-local.ts",
     "build": "bun run typecheck && bun frontend/build.ts",
     "build:custom-node": "bun scripts/build-custom-nodes.ts",
     "fmt": "oxfmt && uv run ruff format",
@@ -24,6 +26,7 @@
     "init:template": "bun scripts/init-template.ts",
     "skills:sync": "bun scripts/sync-comfyui-skills.ts",
     "skills:check": "bun scripts/sync-comfyui-skills.ts --check",
+    "setup:local": "bun scripts/setup-local.ts",
     "test": "bun run test:unit",
     "test:frontend": "bun test frontend/test",
     "test:backend": "uv run pytest tests/python tests/backend -q",

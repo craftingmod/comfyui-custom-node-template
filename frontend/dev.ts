@@ -1,6 +1,6 @@
 import { rm } from "node:fs/promises"
 
-import { COMFY_APP_IMPORT, FRONTEND_ENTRY, OUTPUT_DIRECTORY, buildConfig } from "./build"
+import { COMFY_APP_IMPORT, FRONTEND_ENTRY, OUTPUT_DIRECTORY, buildConfig } from "./build.ts"
 
 await rm(OUTPUT_DIRECTORY, { recursive: true, force: true })
 

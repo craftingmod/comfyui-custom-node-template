@@ -51,6 +51,43 @@ bun install
 
 Also update the description, LICENSE copyright holder, and icon for the new project.
 
+## Local ComfyUI development
+
+Copy `.env.example` to `.env.local` and set `COMFYUI_PATH` to the absolute path of
+an existing ComfyUI installation. Then configure Pylance without duplicating the
+machine-specific path:
+
+```shell
+bun run setup:local
+```
+
+This writes the ignored `.vscode/settings.json` with `python.analysis.extraPaths`.
+Existing unrelated VS Code settings are preserved. You can override the configured
+path for one invocation with `--comfyui-path <path>`.
+
+For development, build the frontend and create a directory junction from ComfyUI's
+`custom_nodes/<project.name>` to this repository:
+
+```shell
+bun run deploy:dev
+```
+
+The command is idempotent when the link already points to this repository. It refuses
+to delete or replace an existing directory or a link to another location. Python
+changes require a ComfyUI restart; run `bun run dev` to rebuild frontend changes while
+developing.
+
+To test the packaged layout instead, build the Registry package and replace the
+matching directory below ComfyUI's `custom_nodes` directory with:
+
+```shell
+bun run deploy:local
+```
+
+The destination directory name is `[project].name` from `pyproject.toml`. The deploy
+command validates the ComfyUI layout and swaps in a fully built staging directory so
+a failed build cannot leave a partially copied node package.
+
 ## Development
 
 ```shell

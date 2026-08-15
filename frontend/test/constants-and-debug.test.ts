@@ -6,8 +6,8 @@ import {
   PROJECT_NAME,
   SETTINGS_IDS,
   SETTINGS_PREFIX,
-} from "../src/constants"
-import { debugLog, isDebugEnabled } from "../src/debug"
+} from "../src/constants.ts"
+import { debugLog, isDebugEnabled } from "../src/debug.ts"
 
 afterEach(() => {
   mock.restore()
