@@ -2,7 +2,7 @@ import { rm } from "node:fs/promises"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
-export const COMFY_APP_IMPORT = 'import { app } from "/scripts/app.js";'
+export const COMFY_APP_IMPORT = 'import { app } from "/scripts/app.js"; import { api } from "/scripts/api.js";'
 export const FRONTEND_ROOT = path.dirname(fileURLToPath(import.meta.url))
 export const FRONTEND_ENTRY = path.join(FRONTEND_ROOT, "src", "index.ts")
 export const OUTPUT_DIRECTORY = path.resolve(FRONTEND_ROOT, "..", "dist")
