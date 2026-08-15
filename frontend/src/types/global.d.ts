@@ -10,3 +10,13 @@ declare global {
     api: ComfyApi
   }
 }
+
+declare module "*/scripts/api.js" {
+  export const api: ComfyApp
+  export type ComfyApi = ComfyApp
+}
+
+declare module "*/scripts/app.js" {
+  export const app: ComfyApi
+  export type ComfyApp = ComfyApp
+}

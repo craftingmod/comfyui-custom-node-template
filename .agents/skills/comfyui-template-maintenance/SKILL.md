@@ -15,7 +15,8 @@ Keep this skill synchronized with the repository command surface. Whenever addin
 
 - Run `bun run dev` to type-check once and rebuild the frontend when source files change.
 - Run `bun run build` to type-check and create the production frontend bundle in `dist/`.
-- Run `bun run typecheck` to check TypeScript without building.
+- Run `bun run typecheck` to check the root Bun tooling, browser frontend source,
+  and Bun + DOM frontend tests as separate TypeScript contexts without building.
 
 Do not edit generated files in `dist/`; edit `frontend/` and rebuild.
 
@@ -56,12 +57,17 @@ Inspect the diff after either fixing command. Expect `lint-staged` to run Oxfmt 
 
 ## Test
 
-- Run `bun run test:frontend` for Bun frontend tests.
+- Run `bun run test:frontend` for Bun frontend tests with the Happy DOM preload.
 - Run `bun run test:backend` for Python tests under `tests/python` and `tests/backend`.
 - Run `bun run test:unit` for both frontend and backend suites.
 - Run `bun run test` as the current alias of `test:unit`.
-- Run `bun run test:watch` while iterating on frontend tests.
-- Run `bun run test:coverage` for frontend coverage with the thresholds in `bunfig.toml`.
+- Run `bun run test:watch` while iterating on frontend tests with the Happy DOM preload.
+- Run `bun run test:coverage` for frontend coverage with the Happy DOM preload and
+  the thresholds in `bunfig.toml`.
+
+Keep the Happy DOM preload scoped to the frontend test commands in `package.json`.
+Do not configure it globally in `bunfig.toml`, because root Bun tests must retain
+their DOM-free runtime context.
 
 Before handing off a normal code change, prefer this validation sequence:
 

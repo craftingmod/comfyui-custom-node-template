@@ -1,6 +1,12 @@
 {
   "extends": "@tsconfig/bun/tsconfig.json",
-  "include": ["frontend/**/*", "scripts/**/*", "oxfmt.config.ts", "oxlint.config.ts"],
+  "include": [
+    "frontend/build.ts",
+    "frontend/dev.ts",
+    "scripts/**/*",
+    "oxfmt.config.ts",
+    "oxlint.config.ts"
+  ],
   "compilerOptions": {
     "types": ["bun"],
     "allowImportingTsExtensions": true
