@@ -125,7 +125,13 @@ bun run version:bump
 ```
 
 Push the commit and tag when ready. The tag workflow validates the repository,
-rebuilds the frontend, and publishes with `REGISTRY_ACCESS_TOKEN`.
+checks that template placeholders have been replaced and project identifiers agree,
+rebuilds the frontend, and publishes with `REGISTRY_ACCESS_TOKEN`. You can run the
+publish-specific metadata check locally before tagging:
+
+```shell
+bun run release:check
+```
 
 ## License
 

@@ -9,6 +9,8 @@ Run repository scripts from the repository root with Bun. Inspect the working tr
 
 Treat `package.json` as the source of truth for available commands. Install JavaScript dependencies with `bun install --frozen-lockfile` and Python dependencies with `uv sync --locked --group dev`.
 
+Keep this skill synchronized with the repository command surface. Whenever adding, removing, renaming, or materially changing a script under `scripts/` or a command in `package.json`, update this `SKILL.md` in the same change with the command's purpose, expected behavior, and any safety or validation requirements. Do not hand off the change while the repository scripts and this skill disagree.
+
 ## Develop and build the frontend
 
 - Run `bun run dev` to type-check once and rebuild the frontend when source files change.
@@ -83,6 +85,14 @@ For non-interactive PowerShell use, pass exactly five newline-separated values:
 ```
 
 Expect updates to `pyproject.toml` (`project.name`, repository URL, Registry publisher ID, display name, and icon URL), the `package.json` package name, `PROJECT_ID` and `PROJECT_NAME` in `frontend/src/constants.ts`, and the matching V3 example-node constants. Project ID is the machine identifier; Project Name is display text; Registry Publisher ID is independent of the GitHub username. Run `uv lock` and `bun install` afterward. Do not use `repo.json`; the initializer intentionally ignores it.
+
+## Validate release metadata
+
+Run `bun run release:check` before creating or pushing a release tag. The uninitialized template is expected to fail this check; initialize it with `bun run init:template` before publishing an actual custom node.
+
+Expect the check to reject template placeholder values, empty release metadata, disagreement between `package.json` and `pyproject.toml` project names, mismatched frontend or backend project IDs and display names, and a `pyproject.toml` Repository URL that does not match `GITHUB_REPOSITORY` when that environment variable is available. Fix every reported field rather than bypassing the check.
+
+The tag-triggered Registry workflow must run `bun run release:check` after installing Bun dependencies and before building or invoking the Registry publish action. Keep release-validation tests covering initialized metadata, template placeholders, and identity mismatches whenever this validation changes.
 
 ## Bump the patch version
 

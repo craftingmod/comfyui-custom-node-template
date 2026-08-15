@@ -24,6 +24,7 @@
     "lint": "oxlint && uv run ruff check .",
     "lint:fix": "oxlint --fix && uv run ruff check --fix .",
     "init:template": "bun scripts/init-template.ts",
+    "release:check": "bun scripts/validate-release.ts",
     "skills:sync": "bun scripts/sync-comfyui-skills.ts",
     "skills:check": "bun scripts/sync-comfyui-skills.ts --check",
     "setup:local": "bun scripts/setup-local.ts",
