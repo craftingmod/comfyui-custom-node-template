@@ -1,3 +1,0 @@
-[submodule ".agents/vendor/comfyui-custom-node-skills"]
-	path = .agents/vendor/comfyui-custom-node-skills
-	url = https://github.com/jtydhr88/comfyui-custom-node-skills.git

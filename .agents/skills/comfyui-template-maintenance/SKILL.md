@@ -1,6 +1,6 @@
 ---
 name: comfyui-template-maintenance
-description: Develop, validate, build, initialize, and maintain this ComfyUI custom node template with its package.json and repository scripts. Use when running the frontend development workflow, formatting or linting, type-checking, testing, building Registry archives, setting project metadata, bumping releases, or synchronizing vendored comfyui-node-* skills.
+description: Develop, validate, build, initialize, locally deploy, and maintain this ComfyUI custom node template with its package.json and repository scripts. Use when configuring a local ComfyUI path, linking or copying the node into custom_nodes, running the frontend development workflow, formatting or linting, type-checking, testing, building Registry archives, setting project metadata, bumping releases, or synchronizing vendored comfyui-node-* skills.
 ---
 
 # ComfyUI Template Maintenance
@@ -16,6 +16,25 @@ Treat `package.json` as the source of truth for available commands. Install Java
 - Run `bun run typecheck` to check TypeScript without building.
 
 Do not edit generated files in `dist/`; edit `frontend/` and rebuild.
+
+## Configure and deploy to local ComfyUI
+
+Use `.env.local` as the machine-specific source of truth for an existing ComfyUI installation:
+
+```dotenv
+COMFYUI_PATH=C:/absolute/path/to/ComfyUI
+```
+
+Copy `.env.example` when starting and do not commit `.env.local` or the generated `.vscode/settings.json`.
+
+Run `bun run setup:local` to validate that `COMFYUI_PATH` contains `comfy_api/` and `custom_nodes/`, then write the path to `python.analysis.extraPaths`. Preserve unrelated VS Code settings. Pass `--comfyui-path <path>` after `--` for a one-command override.
+
+Choose the local deployment command by intent:
+
+- Run `bun run deploy:dev` during development. It builds `dist/` and creates `custom_nodes/<project.name>` as a Windows junction (or directory symlink on other platforms) to the repository. Treat an existing link to the same repository as success. Never delete or replace an existing ordinary directory or a link to another target; stop and report it.
+- Run `bun run deploy:local` to exercise the packaged layout. It builds the Registry ZIP, extracts it to a staging directory, and swaps that complete directory into `custom_nodes/<project.name>`. Reject symlink targets and paths outside the immediate `custom_nodes` child.
+
+After `deploy:dev`, use `bun run dev` to rebuild frontend changes. Expect Python backend changes to require a ComfyUI restart.
 
 ## Maintain the V3 backend
 
@@ -88,10 +107,6 @@ Expect the archive to contain Git-tracked files, minus paths matched by `.comfyi
 
 Run `bun run skills:check`; exit code `1` means synchronization is needed. Run `bun run skills:sync` to synchronize.
 
-The default source is the `comfyui-custom-node-skills` submodule. Initialize it when missing:
+By default, shallow-clone the latest default branch of `jtydhr88/comfyui-custom-node-skills` into a validated temporary directory and use `plugins/comfyui-custom-nodes/skills` as the source. Always remove the temporary clone after checking or synchronizing. Use `bun scripts/sync-comfyui-skills.ts --source <skills-directory>` for an offline or local source instead.
 
-```shell
-git submodule update --init --recursive
-```
-
-Use `bun scripts/sync-comfyui-skills.ts --source <skills-directory>` for another source. Require valid `comfyui-node-*` directories containing `SKILL.md`. Expect synchronization to replace only matching `comfyui-node-*` destinations; it does not manage this skill.
+Require valid `comfyui-node-*` directories containing `SKILL.md`. Stage and fingerprint copies before replacing matching destinations. Do not manage `comfyui-template-maintenance` or unrelated skills.

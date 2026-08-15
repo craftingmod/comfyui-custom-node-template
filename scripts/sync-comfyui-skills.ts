@@ -1,5 +1,17 @@
 import { createHash, randomUUID } from "node:crypto"
-import { cp, lstat, mkdir, readFile, readdir, realpath, rename, rm, stat } from "node:fs/promises"
+import {
+  cp,
+  lstat,
+  mkdir,
+  mkdtemp,
+  readFile,
+  readdir,
+  realpath,
+  rename,
+  rm,
+  stat,
+} from "node:fs/promises"
+import os from "node:os"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { parseArgs } from "node:util"
@@ -8,14 +20,8 @@ const scriptRoot = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(scriptRoot, "..")
 const agentsRoot = path.join(repoRoot, ".agents")
 const skillsRoot = path.join(agentsRoot, "skills")
-const defaultSource = path.join(
-  agentsRoot,
-  "vendor",
-  "comfyui-custom-node-skills",
-  "plugins",
-  "comfyui-custom-nodes",
-  "skills",
-)
+const upstreamRepository = "https://github.com/jtydhr88/comfyui-custom-node-skills.git"
+const upstreamSkillsPath = path.join("plugins", "comfyui-custom-nodes", "skills")
 
 async function isDirectory(directoryPath: string): Promise<boolean> {
   try {
@@ -96,22 +102,44 @@ async function removeValidatedStagingDirectory(stagingRoot: string): Promise<voi
   await rm(resolvedStaging, { recursive: true, force: true })
 }
 
-async function main(): Promise<number> {
-  const { values } = parseArgs({
-    args: Bun.argv.slice(2),
-    options: {
-      check: { type: "boolean", default: false },
-      source: { type: "string" },
-    },
-    strict: true,
-  })
+async function removeValidatedCloneDirectory(cloneRoot: string): Promise<void> {
+  const stats = await lstat(cloneRoot).catch(() => undefined)
+  if (!stats) return
 
-  const requestedSource = values.source?.trim() || defaultSource
+  const resolvedClone = await realpath(cloneRoot)
+  const resolvedTemp = await realpath(os.tmpdir())
+  const isExpectedCloneDirectory =
+    stats.isDirectory() &&
+    !stats.isSymbolicLink() &&
+    path.dirname(resolvedClone) === resolvedTemp &&
+    path.basename(resolvedClone).startsWith("comfyui-skill-sync-")
+
+  if (!isExpectedCloneDirectory) {
+    console.warn(`Temporary clone was not removed because validation failed: ${resolvedClone}`)
+    return
+  }
+
+  await rm(resolvedClone, { recursive: true, force: true })
+}
+
+async function cloneUpstreamSkills(): Promise<{ cloneRoot: string; sourceRoot: string }> {
+  const cloneRoot = await mkdtemp(path.join(os.tmpdir(), "comfyui-skill-sync-"))
+  const clone = Bun.spawn(
+    ["git", "clone", "--depth", "1", "--single-branch", "--no-tags", upstreamRepository, cloneRoot],
+    { cwd: repoRoot, stdout: "inherit", stderr: "inherit" },
+  )
+  const exitCode = await clone.exited
+  if (exitCode !== 0) {
+    await removeValidatedCloneDirectory(cloneRoot)
+    throw new Error(`Failed to clone the default branch of ${upstreamRepository}`)
+  }
+
+  return { cloneRoot, sourceRoot: path.join(cloneRoot, upstreamSkillsPath) }
+}
+
+async function synchronizeFromSource(requestedSource: string, check: boolean): Promise<number> {
   if (!(await isDirectory(requestedSource))) {
-    throw new Error(
-      `Skill source not found: ${requestedSource}\n` +
-        "Initialize the submodule first with: git submodule update --init --recursive",
-    )
+    throw new Error(`Skill source not found: ${requestedSource}`)
   }
 
   const sourceRoot = await realpath(requestedSource)
@@ -147,7 +175,7 @@ async function main(): Promise<number> {
     return 0
   }
 
-  if (values.check) {
+  if (check) {
     console.log("ComfyUI node skills need synchronization:")
     for (const skillName of outdatedSkills) {
       console.log(`  - ${skillName}`)
@@ -214,6 +242,27 @@ async function main(): Promise<number> {
 
   console.log(`Synchronized ${outdatedSkills.length} ComfyUI node skill(s).`)
   return 0
+}
+
+async function main(): Promise<number> {
+  const { values } = parseArgs({
+    args: Bun.argv.slice(2),
+    options: {
+      check: { type: "boolean", default: false },
+      source: { type: "string" },
+    },
+    strict: true,
+  })
+
+  const localSource = values.source?.trim()
+  if (localSource) return synchronizeFromSource(localSource, values.check)
+
+  const { cloneRoot, sourceRoot } = await cloneUpstreamSkills()
+  try {
+    return await synchronizeFromSource(sourceRoot, values.check)
+  } finally {
+    await removeValidatedCloneDirectory(cloneRoot)
+  }
 }
 
 try {
