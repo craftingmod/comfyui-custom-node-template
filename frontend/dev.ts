@@ -27,6 +27,8 @@ const child = Bun.spawn(
     naming.chunk,
     "--asset-naming",
     naming.asset,
+    "--sourcemap",
+    "linked",
     "--watch",
   ],
   {
