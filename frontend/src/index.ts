@@ -1,3 +1,4 @@
+import { app } from "../../scripts/app.js"
 import { PROJECT_ID, PROJECT_NAME, SETTINGS_IDS } from "./constants.ts"
 
 app.registerExtension({

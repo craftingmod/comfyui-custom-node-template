@@ -1,6 +1,6 @@
 import { rm } from "node:fs/promises"
 
-import { COMFY_APP_IMPORT, FRONTEND_ENTRY, OUTPUT_DIRECTORY, buildConfig } from "./build.ts"
+import { FRONTEND_ENTRY, OUTPUT_DIRECTORY, buildConfig } from "./build.ts"
 
 await rm(OUTPUT_DIRECTORY, { recursive: true, force: true })
 
@@ -27,8 +27,6 @@ const child = Bun.spawn(
     naming.chunk,
     "--asset-naming",
     naming.asset,
-    "--banner",
-    COMFY_APP_IMPORT,
     "--watch",
   ],
   {

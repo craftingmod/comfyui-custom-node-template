@@ -1,13 +1,7 @@
 import { describe, expect, it } from "bun:test"
 import path from "node:path"
 
-import {
-  COMFY_APP_IMPORT,
-  FRONTEND_ENTRY,
-  FRONTEND_ROOT,
-  OUTPUT_DIRECTORY,
-  buildConfig,
-} from "../build.ts"
+import { FRONTEND_ENTRY, FRONTEND_ROOT, OUTPUT_DIRECTORY, buildConfig } from "../build.ts"
 
 describe("Bun build config", () => {
   it("builds the frontend entry into the repository dist directory", () => {
@@ -28,8 +22,7 @@ describe("Bun build config", () => {
     })
   })
 
-  it("keeps ComfyUI runtime modules external and injects the app import", () => {
-    expect(buildConfig.external).toEqual(["/scripts/app.js", "/scripts/api.js"])
-    expect(buildConfig.banner).toBe(COMFY_APP_IMPORT)
+  it("keeps ComfyUI runtime modules external", () => {
+    expect(buildConfig.external).toEqual(["*/scripts/app.js", "*/scripts/api.js"])
   })
 })

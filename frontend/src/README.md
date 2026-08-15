@@ -7,5 +7,6 @@
 ## Purpose
 
 Contains the frontend extension that runs inside the ComfyUI browser UI. Use
-the ComfyUI `app` and `api` globals together with native browser DOM APIs here
-to register extensions, settings, commands, widgets, and other UI behavior.
+the ComfyUI `app` and `api` modules from `../../scripts/app.js` and
+`../../scripts/api.js` together with native browser DOM APIs here to register
+extensions, settings, commands, widgets, and other UI behavior.

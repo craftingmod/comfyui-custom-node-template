@@ -4,7 +4,7 @@
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ES2025"],
     "module": "ESNext",
-    "types": ["@comfyorg/comfyui-frontend-types", "./types/global.d.ts"],
+    "types": ["@comfyorg/comfyui-frontend-types"],
 
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
