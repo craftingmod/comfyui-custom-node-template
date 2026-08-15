@@ -74,6 +74,8 @@ bun run test:unit
 
 Also run `bun run build` after frontend or build-configuration changes.
 
+The CI workflow must run `bun run build:custom-node` after the normal validation and frontend build so changes to `.comfyignore`, `[tool.comfy].includes`, or the generated `dist/` layout cannot merge without exercising the Registry archive path.
+
 ## Initialize template metadata
 
 Run `bun run init:template` and enter a Registry/package Project ID, user-facing Project Name, GitHub username, GitHub repository name, and Comfy Registry Publisher ID, in that order. Keep the Project ID stable after publishing because it namespaces the example V3 node and frontend settings.
@@ -92,7 +94,7 @@ Run `bun run release:check` before creating or pushing a release tag. The uninit
 
 Expect the check to reject template placeholder values, empty release metadata, disagreement between `package.json` and `pyproject.toml` project names, mismatched frontend or backend project IDs and display names, and a `pyproject.toml` Repository URL that does not match `GITHUB_REPOSITORY` when that environment variable is available. Fix every reported field rather than bypassing the check.
 
-The tag-triggered Registry workflow must run `bun run release:check` after installing Bun dependencies and before building or invoking the Registry publish action. Keep release-validation tests covering initialized metadata, template placeholders, and identity mismatches whenever this validation changes.
+The tag-triggered Registry workflow must run `bun run release:check` after installing Bun dependencies and before building or invoking the Registry publish action. The source template repository `craftingmod/comfyui-custom-node-template` must skip the Registry publish job while still running the reusable CI workflow for its tags; repositories created from the template retain tag-triggered publishing. Keep release-validation tests covering initialized metadata, template placeholders, and identity mismatches whenever this validation changes.
 
 ## Bump the patch version
 

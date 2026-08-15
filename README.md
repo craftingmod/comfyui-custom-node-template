@@ -133,6 +133,10 @@ publish-specific metadata check locally before tagging:
 bun run release:check
 ```
 
+Tags on the source template repository run CI, including the Registry ZIP build, but
+skip the Registry publish job. Repositories created from this template retain the
+tag-triggered publish behavior.
+
 ## License
 
 MIT
