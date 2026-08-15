@@ -1,14 +1,15 @@
-from .backend import (
-  NODE_CLASS_MAPPINGS,
-  NODE_DISPLAY_NAME_MAPPINGS,
-  ExampleNormalizeTextNode,
-)
+from .backend import ExampleNormalizeTextNode, TemplateExtension
 
 WEB_DIRECTORY = "./dist"
 
+
+async def comfy_entrypoint() -> TemplateExtension:
+  return TemplateExtension()
+
+
 __all__ = [
-  "NODE_CLASS_MAPPINGS",
-  "NODE_DISPLAY_NAME_MAPPINGS",
   "WEB_DIRECTORY",
   "ExampleNormalizeTextNode",
+  "TemplateExtension",
+  "comfy_entrypoint",
 ]

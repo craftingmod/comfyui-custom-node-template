@@ -2,19 +2,36 @@ name: Publish to Comfy registry
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
-    paths:
-      - "pyproject.toml"
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
 
 jobs:
+  validate:
+    uses: ./.github/workflows/ci.yaml
+
   publish-node:
     name: Publish Custom Node to registry
+    needs: validate
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v7
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Install Bun dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build frontend
+        run: bun run build
+
       - name: Publish Custom Node
         uses: Comfy-Org/publish-node-action@main
         with:
-          personal_access_token: ${{ secrets.REGISTRY_ACCESS_TOKEN }} ## Add your own personal access token to your Github Repository secrets and reference it here.
+          personal_access_token: ${{ secrets.REGISTRY_ACCESS_TOKEN }}

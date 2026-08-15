@@ -19,25 +19,22 @@ def load_module_from_path(module_name: str, module_path: Path):
 
 def test_example_normalize_text_node_normalizes_multiline_input():
   module = load_module_from_path("example_normalize_text_node", NODE_PATH)
-  node = module.ExampleNormalizeTextNode()
+  output = module.ExampleNormalizeTextNode.execute("  alpha \n\n beta  \n gamma ")
 
-  assert module.ExampleNormalizeTextNode.CATEGORY == "examples/testing"
-  assert module.ExampleNormalizeTextNode.FUNCTION == "normalize_text"
-  assert module.ExampleNormalizeTextNode.RETURN_TYPES == ("STRING",)
-  assert node.normalize_text("  alpha \n\n beta  \n gamma ") == ("alpha beta gamma",)
+  assert output.values == ("alpha beta gamma",)
 
 
 def test_example_normalize_text_node_declares_multiline_text_input():
   module = load_module_from_path("example_normalize_text_node_inputs", NODE_PATH)
 
-  assert module.ExampleNormalizeTextNode.INPUT_TYPES() == {
-    "required": {
-      "text": (
-        "STRING",
-        {
-          "default": "",
-          "multiline": True,
-        },
-      )
-    }
-  }
+  schema = module.ExampleNormalizeTextNode.define_schema()
+
+  assert schema.node_id == "comfyui-custom-node-template.NormalizeText"
+  assert schema.display_name == "My Custom Node Normalize Text"
+  assert schema.category == "My Custom Node/examples"
+  assert len(schema.inputs) == 1
+  assert schema.inputs[0].id == "text"
+  assert schema.inputs[0].default == ""
+  assert schema.inputs[0].multiline is True
+  assert len(schema.outputs) == 1
+  assert schema.outputs[0].display_name == "text"

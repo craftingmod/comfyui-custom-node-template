@@ -2,7 +2,7 @@ node_modules/
 __pycache__/
 dist/
 build/
-coverage/ 
+coverage/
 .DS_Store
 .env
 .env.local
@@ -23,3 +23,5 @@ docs/superpowers/
 .e2e/
 test-results/
 playwright-report/
+.pytest_cache/
+.ruff_cache/

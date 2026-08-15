@@ -1,11 +1,11 @@
-import { SETTINGS_IDS } from "./constants.ts"
+import { PROJECT_ID, PROJECT_NAME, SETTINGS_IDS } from "./constants.ts"
 
 app.registerExtension({
-  name: "ComfyUI My Custom Node",
+  name: `${PROJECT_ID}.extension`,
   settings: [
     {
       id: SETTINGS_IDS.DEBUG_LOGGING satisfies string as any,
-      name: "Enable Debug Logging",
+      name: `${PROJECT_NAME}: Enable Debug Logging`,
       type: "boolean",
       tooltip: "Show detailed debug logs in browser console during operation",
       defaultValue: false,

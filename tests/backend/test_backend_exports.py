@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 
 from conftest import load_package_from_path
@@ -6,23 +7,17 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 BACKEND_INIT_PATH = REPO_ROOT / "backend" / "__init__.py"
 
 
-def test_backend_package_exports_example_node_mappings():
+def test_backend_package_exports_v3_extension():
   module = load_package_from_path(
     "backend_package",
     BACKEND_INIT_PATH,
     repo_root=REPO_ROOT,
   )
 
-  example_node = module.ExampleNormalizeTextNode
+  extension = module.TemplateExtension()
 
-  assert module.NODE_CLASS_MAPPINGS == {
-    "TemplateExampleNormalizeText": example_node,
-  }
-  assert module.NODE_DISPLAY_NAME_MAPPINGS == {
-    "TemplateExampleNormalizeText": "Template Example Normalize Text",
-  }
+  assert asyncio.run(extension.get_node_list()) == [module.ExampleNormalizeTextNode]
   assert module.__all__ == [
     "ExampleNormalizeTextNode",
-    "NODE_CLASS_MAPPINGS",
-    "NODE_DISPLAY_NAME_MAPPINGS",
+    "TemplateExtension",
   ]

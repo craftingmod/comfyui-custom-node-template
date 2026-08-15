@@ -17,6 +17,13 @@ Treat `package.json` as the source of truth for available commands. Install Java
 
 Do not edit generated files in `dist/`; edit `frontend/` and rebuild.
 
+## Maintain the V3 backend
+
+- Define nodes as `io.ComfyNode` subclasses with `define_schema()` and classmethod `execute()`.
+- Return values with `io.NodeOutput` and register node classes from the async `TemplateExtension.get_node_list()` method.
+- Keep the root `comfy_entrypoint()` and `WEB_DIRECTORY = "./dist"` exports; do not restore legacy `NODE_CLASS_MAPPINGS` or `NODE_DISPLAY_NAME_MAPPINGS`.
+- Keep backend `PROJECT_ID` and `PROJECT_NAME` synchronized with `frontend/src/constants.ts` and Registry metadata by using `bun run init:template`.
+
 ## Format and lint
 
 - Run `bun run fmt:check` to check Oxfmt-supported files and Ruff-formatted Python without modifying them.
@@ -48,19 +55,19 @@ Also run `bun run build` after frontend or build-configuration changes.
 
 ## Initialize template metadata
 
-Run `bun run init:template` and enter a lowercase project/package name, GitHub username, and GitHub repository name, in that order.
+Run `bun run init:template` and enter a Registry/package Project ID, user-facing Project Name, GitHub username, GitHub repository name, and Comfy Registry Publisher ID, in that order. Keep the Project ID stable after publishing because it namespaces the example V3 node and frontend settings.
 
-For non-interactive PowerShell use, pass exactly three newline-separated values:
+For non-interactive PowerShell use, pass exactly five newline-separated values:
 
 ```powershell
-@("my-custom-node", "octocat", "comfyui-my-custom-node") | bun run init:template
+@("my-custom-node", "My Custom Node", "octocat", "comfyui-my-custom-node", "octocat") | bun run init:template
 ```
 
-Expect updates to `pyproject.toml` (`project.name`, repository URL, Comfy publisher ID, and icon URL), the `package.json` package name, and `PROJECT_ID` in `frontend/src/constants.ts`. Run `uv lock` and `bun install` afterward. Do not use `repo.json`; the initializer intentionally ignores it.
+Expect updates to `pyproject.toml` (`project.name`, repository URL, Registry publisher ID, display name, and icon URL), the `package.json` package name, `PROJECT_ID` and `PROJECT_NAME` in `frontend/src/constants.ts`, and the matching V3 example-node constants. Project ID is the machine identifier; Project Name is display text; Registry Publisher ID is independent of the GitHub username. Run `uv lock` and `bun install` afterward. Do not use `repo.json`; the initializer intentionally ignores it.
 
 ## Bump the patch version
 
-Inspect `git status --short`, then run `bun scripts/bump-version.ts`.
+Inspect `git status --short`, then run `bun run version:bump`.
 
 Expect the script to increment the patch component of `[project].version` and run `uv sync`. If the working tree was completely clean before execution, expect it to stage `pyproject.toml` and `uv.lock`, commit with `bump: version to <new_version>.`, and create the lightweight tag `v<new_version>`. Push only when the user requests remote publication:
 

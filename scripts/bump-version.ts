@@ -54,9 +54,9 @@ if (wasClean) {
   await $`git commit -m ${`bump: version to ${newVersion}.`}`
   await $`git tag ${tagName}`
   console.log(`Created commit and tag ${tagName}.`)
-  console.log(`Push tag using commands:\ngit push origin v${tagName}`)
+  console.log(`Push tag using commands:\ngit push origin ${tagName}`)
 } else {
   console.log("Skipped commit and tag because the working tree was not clean before the bump.")
   console.log("Please manually commit and tagging:")
-  console.log(`git tag ${tagName}\ngit push origin v${tagName}`)
+  console.log(`git tag ${tagName}\ngit push origin ${tagName}`)
 }

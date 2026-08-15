@@ -1,6 +1,6 @@
 [project]
 name = "comfyui-custom-node-template"
-description = "A ComfyUI custom node"
+description = "A Bun and Python template for a ComfyUI V3 custom node"
 version = "1.0.0"
 requires-python = ">=3.12"
 readme = "README.md"

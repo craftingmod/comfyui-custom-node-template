@@ -14,12 +14,33 @@ function requireMatch(value: string, pattern: RegExp, message: string): string {
   return trimmed
 }
 
-export function validateProjectName(value: string): string {
-  return requireMatch(
+export function validateProjectId(value: string): string {
+  const projectId = requireMatch(
     value,
-    /^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$/,
-    "Project name must be a lowercase package name using letters, numbers, '.', '_' or '-'.",
+    /^[a-z](?:[a-z0-9]|[._-](?=[a-z0-9]))*$/,
+    "Project ID must start with a lowercase letter and use lowercase letters, numbers, '.', '_' or single '-'.",
   )
+
+  if (projectId.length >= 100) {
+    throw new Error("Project ID must be less than 100 characters long.")
+  }
+
+  return projectId
+}
+
+export function validateProjectName(value: string): string {
+  const projectName = value.trim()
+  const hasControlCharacter = [...projectName].some((character) => {
+    const codePoint = character.codePointAt(0)!
+    return codePoint < 32 || codePoint === 127
+  })
+  if (projectName.length === 0 || projectName.length > 100 || hasControlCharacter) {
+    throw new Error(
+      "Project Name must be a non-empty display name without control characters and at most 100 characters long.",
+    )
+  }
+
+  return projectName
 }
 
 export function validateGitHubUsername(value: string): string {
@@ -50,31 +71,44 @@ export function validateGitHubRepo(value: string): string {
   return repo
 }
 
-function replaceRequired(
-  source: string,
-  pattern: RegExp,
-  replacement: string,
-  label: string,
-): string {
+export function validatePublisherId(value: string): string {
+  const publisherId = requireMatch(
+    value,
+    /^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$/,
+    "Registry Publisher ID must use lowercase letters, numbers, '.', '_' or '-'.",
+  )
+
+  if (publisherId.length > 100) {
+    throw new Error("Registry Publisher ID must be at most 100 characters long.")
+  }
+
+  return publisherId
+}
+
+function replaceQuotedValue(source: string, pattern: RegExp, value: string, label: string): string {
   if (!pattern.test(source)) {
     throw new Error(`Could not find ${label}`)
   }
 
-  return source.replace(pattern, replacement)
+  return source.replace(pattern, (_match, prefix: string) => `${prefix}${JSON.stringify(value)}`)
 }
 
 export async function initializeTemplate(
+  projectId: string,
   projectName: string,
   githubUsername: string,
   githubRepo: string,
+  publisherId: string,
 ): Promise<void> {
   const pyprojectPath = Path.join(projectDir, "pyproject.toml")
   const packagePath = Path.join(projectDir, "package.json")
   const constantsPath = Path.join(projectDir, "frontend", "src", "constants.ts")
-  const [originalPyproject, originalPackage, originalConstants] = await Promise.all([
+  const nodePath = Path.join(projectDir, "backend", "nodes", "example_normalize_text.py")
+  const [originalPyproject, originalPackage, originalConstants, originalNode] = await Promise.all([
     fs.readFile(pyprojectPath, "utf8"),
     fs.readFile(packagePath, "utf8"),
     fs.readFile(constantsPath, "utf8"),
+    fs.readFile(nodePath, "utf8"),
   ])
 
   const projectSectionPattern = /(^\[project\]\s*$)([\s\S]*?)(?=^\[|(?![\s\S]))/m
@@ -83,10 +117,10 @@ export async function initializeTemplate(
     throw new Error("Could not find [project] in pyproject.toml")
   }
 
-  const updatedProjectSection = replaceRequired(
+  const updatedProjectSection = replaceQuotedValue(
     projectSection[0],
     /^(name\s*=\s*)["'][^"']+["']\s*$/m,
-    `$1"${projectName}"`,
+    projectId,
     "project.name in pyproject.toml",
   )
 
@@ -94,73 +128,104 @@ export async function initializeTemplate(
     projectSectionPattern,
     () => updatedProjectSection,
   )
-  updatedPyproject = replaceRequired(
+  updatedPyproject = replaceQuotedValue(
     updatedPyproject,
     /^(Repository\s*=\s*)["'][^"']+["']\s*$/m,
-    `$1"https://github.com/${githubUsername}/${githubRepo}"`,
+    `https://github.com/${githubUsername}/${githubRepo}`,
     "project.urls.Repository in pyproject.toml",
   )
-  updatedPyproject = replaceRequired(
+  updatedPyproject = replaceQuotedValue(
     updatedPyproject,
     /^(PublisherId\s*=\s*)["'][^"']+["']\s*$/m,
-    `$1"${githubUsername}"`,
+    publisherId,
     "tool.comfy.PublisherId in pyproject.toml",
   )
-  updatedPyproject = replaceRequired(
+  updatedPyproject = replaceQuotedValue(
+    updatedPyproject,
+    /^(DisplayName\s*=\s*)["'][^"']+["']\s*$/m,
+    projectName,
+    "tool.comfy.DisplayName in pyproject.toml",
+  )
+  updatedPyproject = replaceQuotedValue(
     updatedPyproject,
     /^(Icon\s*=\s*)["'][^"']+["']\s*$/m,
-    `$1"https://cdn.jsdelivr.net/gh/${githubUsername}/${githubRepo}/assets/icon.svg"`,
+    `https://cdn.jsdelivr.net/gh/${githubUsername}/${githubRepo}/assets/icon.svg`,
     "tool.comfy.Icon in pyproject.toml",
   )
 
   const packageJson = JSON.parse(originalPackage) as Record<string, unknown>
-  packageJson.name = projectName
+  packageJson.name = projectId
   const updatedPackage = `${JSON.stringify(packageJson, null, 2)}\n`
-  const updatedConstants = replaceRequired(
+  let updatedConstants = replaceQuotedValue(
     originalConstants,
     /^(export const PROJECT_ID\s*=\s*)["'][^"']+["']\s*$/m,
-    `$1"${projectName}"`,
+    projectId,
     "PROJECT_ID in frontend/src/constants.ts",
+  )
+  updatedConstants = replaceQuotedValue(
+    updatedConstants,
+    /^(export const PROJECT_NAME\s*=\s*)["'][^"']+["']\s*$/m,
+    projectName,
+    "PROJECT_NAME in frontend/src/constants.ts",
+  )
+  let updatedNode = replaceQuotedValue(
+    originalNode,
+    /^(PROJECT_ID\s*=\s*)["'][^"']+["']\s*$/m,
+    projectId,
+    "PROJECT_ID in the example backend node",
+  )
+  updatedNode = replaceQuotedValue(
+    updatedNode,
+    /^(PROJECT_NAME\s*=\s*)["'][^"']+["']\s*$/m,
+    projectName,
+    "PROJECT_NAME in the example backend node",
   )
 
   await Promise.all([
     fs.writeFile(pyprojectPath, updatedPyproject),
     fs.writeFile(packagePath, updatedPackage),
     fs.writeFile(constantsPath, updatedConstants),
+    fs.writeFile(nodePath, updatedNode),
   ])
 }
 
 async function main(): Promise<void> {
-  let answers: [string, string, string]
+  let answers: [string, string, string, string, string]
 
   if (process.stdin.isTTY) {
     const input = createInterface({ input: process.stdin, output: process.stdout })
 
     try {
       answers = [
-        await input.question("Project name: "),
+        await input.question("Project ID: "),
+        await input.question("Project Name: "),
         await input.question("GitHub username: "),
         await input.question("GitHub repository name: "),
+        await input.question("Comfy Registry Publisher ID: "),
       ]
     } finally {
       input.close()
     }
   } else {
     const lines = (await Bun.stdin.text()).split(/\r?\n/)
-    if (lines.length < 3) {
+    if (lines.length < 5) {
       throw new Error(
-        "Expected three stdin lines: project name, GitHub username and GitHub repository name.",
+        "Expected five stdin lines: Project ID, Project Name, GitHub username, GitHub repository name and Comfy Registry Publisher ID.",
       )
     }
-    answers = [lines[0]!, lines[1]!, lines[2]!]
+    answers = [lines[0]!, lines[1]!, lines[2]!, lines[3]!, lines[4]!]
   }
 
-  const projectName = validateProjectName(answers[0])
-  const githubUsername = validateGitHubUsername(answers[1])
-  const githubRepo = validateGitHubRepo(answers[2])
+  const projectId = validateProjectId(answers[0])
+  const projectName = validateProjectName(answers[1])
+  const githubUsername = validateGitHubUsername(answers[2])
+  const githubRepo = validateGitHubRepo(answers[3])
+  const publisherId = validatePublisherId(answers[4])
 
-  await initializeTemplate(projectName, githubUsername, githubRepo)
-  console.log(`Initialized ${projectName} for https://github.com/${githubUsername}/${githubRepo}.`)
+  await initializeTemplate(projectId, projectName, githubUsername, githubRepo, publisherId)
+  console.log(
+    `Initialized ${projectName} (${projectId}) for https://github.com/${githubUsername}/${githubRepo}.`,
+  )
   console.log("Run `uv lock` and `bun install` to refresh the lockfiles.")
 }
 

@@ -1,7 +1,7 @@
 {
   "name": "comfyui-custom-node-template",
   "private": true,
-  "description": "A ComfyUI custom node",
+  "description": "A Bun and Python template for a ComfyUI V3 custom node",
   "keywords": [
     "comfyui",
     "custom node",
@@ -14,8 +14,8 @@
   ],
   "type": "module",
   "scripts": {
-    "dev": "tsc --noEmit -p frontend/tsconfig.json && bun frontend/dev.ts",
-    "build": "tsc --noEmit -p frontend/tsconfig.json && bun frontend/build.ts",
+    "dev": "bun run typecheck && bun frontend/dev.ts",
+    "build": "bun run typecheck && bun frontend/build.ts",
     "build:custom-node": "bun scripts/build-custom-nodes.ts",
     "fmt": "oxfmt && uv run ruff format",
     "fmt:check": "oxfmt --check && uv run ruff format --check",
@@ -24,13 +24,14 @@
     "init:template": "bun scripts/init-template.ts",
     "skills:sync": "bun scripts/sync-comfyui-skills.ts",
     "skills:check": "bun scripts/sync-comfyui-skills.ts --check",
-    "test": "bun test:unit",
+    "test": "bun run test:unit",
     "test:frontend": "bun test frontend/test",
     "test:backend": "uv run pytest tests/python tests/backend -q",
-    "test:unit": "bun test:frontend && bun test:backend",
+    "test:unit": "bun run test:frontend && bun run test:backend",
     "test:watch": "bun test --watch frontend/test",
     "test:coverage": "bun test --coverage frontend/test",
-    "typecheck": "tsc --noEmit -p ./tsconfig.json"
+    "typecheck": "tsc --noEmit -p ./tsconfig.json",
+    "version:bump": "bun scripts/bump-version.ts"
   },
   "devDependencies": {
     "@comfyorg/comfyui-frontend-types": "1.47.12",
@@ -51,5 +52,6 @@
       "uv run ruff check --fix",
       "uv run ruff format"
     ]
-  }
+  },
+  "packageManager": "bun@1.3.14"
 }

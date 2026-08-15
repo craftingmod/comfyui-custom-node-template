@@ -1,22 +1,22 @@
-class ExampleNormalizeTextNode:
+from comfy_api.latest import io
+
+PROJECT_ID = "comfyui-custom-node-template"
+PROJECT_NAME = "My Custom Node"
+
+
+class ExampleNormalizeTextNode(io.ComfyNode):
   @classmethod
-  def INPUT_TYPES(cls):
-    return {
-      "required": {
-        "text": (
-          "STRING",
-          {
-            "default": "",
-            "multiline": True,
-          },
-        )
-      }
-    }
+  def define_schema(cls) -> io.Schema:
+    return io.Schema(
+      node_id=f"{PROJECT_ID}.NormalizeText",
+      display_name=f"{PROJECT_NAME} Normalize Text",
+      category=f"{PROJECT_NAME}/examples",
+      description="Normalize non-empty lines into a single space-separated string.",
+      inputs=[io.String.Input("text", default="", multiline=True)],
+      outputs=[io.String.Output(display_name="text")],
+    )
 
-  RETURN_TYPES = ("STRING",)
-  FUNCTION = "normalize_text"
-  CATEGORY = "examples/testing"
-
-  def normalize_text(self, text: str):
-    normalized_parts = [part.strip() for part in text.splitlines() if part.strip()]
-    return (" ".join(normalized_parts),)
+  @classmethod
+  def execute(cls, text: str) -> io.NodeOutput:
+    normalized = " ".join(line.strip() for line in text.splitlines() if line.strip())
+    return io.NodeOutput(normalized)
