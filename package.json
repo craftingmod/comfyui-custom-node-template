@@ -1,35 +1,55 @@
 {
-  "name": "comfyui-custom-node",
-  "version": "1.0.0",
+  "name": "comfyui-custom-node-template",
+  "private": true,
   "description": "A ComfyUI custom node",
-  "type": "module",
-  "scripts": {
-    "dev": "tsc --noEmit -p frontend/tsconfig.json && vite build --watch --config frontend/vite.config.ts",
-    "build": "tsc --noEmit -p frontend/tsconfig.json && vite build --config frontend/vite.config.ts",
-    "typecheck": "tsc --noEmit -p frontend/tsconfig.json",
-    "test": "bun test:unit",
-    "test:frontend": "vitest run --config frontend/vitest.config.ts",
-    "test:backend": "uv run pytest tests/python tests/backend -q",
-    "test:unit": "bun test:frontend && bun test:backend",
-    "test:watch": "vitest --config frontend/vitest.config.ts",
-    "test:coverage": "vitest run --coverage --config frontend/vitest.config.ts"
-  },
   "keywords": [
     "comfyui",
     "custom node",
     "extension"
   ],
-  "author": "Your Name",
-  "license": "MIT",
+  "files": [
+    "frontend/",
+    "./*.config.ts",
+    "scripts/"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "tsc --noEmit -p frontend/tsconfig.json && bun frontend/dev.ts",
+    "build": "tsc --noEmit -p frontend/tsconfig.json && bun frontend/build.ts",
+    "build:custom-node": "bun scripts/build-custom-nodes.ts",
+    "fmt": "oxfmt && uv run ruff format",
+    "fmt:check": "oxfmt --check && uv run ruff format --check",
+    "lint": "oxlint && uv run ruff check .",
+    "lint:fix": "oxlint --fix && uv run ruff check --fix .",
+    "init:template": "bun scripts/init-template.ts",
+    "skills:sync": "bun scripts/sync-comfyui-skills.ts",
+    "skills:check": "bun scripts/sync-comfyui-skills.ts --check",
+    "test": "bun test:unit",
+    "test:frontend": "bun test frontend/test",
+    "test:backend": "uv run pytest tests/python tests/backend -q",
+    "test:unit": "bun test:frontend && bun test:backend",
+    "test:watch": "bun test --watch frontend/test",
+    "test:coverage": "bun test --coverage frontend/test",
+    "typecheck": "tsc --noEmit -p ./tsconfig.json"
+  },
   "devDependencies": {
-    "@comfyorg/comfyui-frontend-types": "^1.48.7",
+    "@comfyorg/comfyui-frontend-types": "1.47.12",
+    "@tsconfig/bun": "^1.0.10",
     "@types/bun": "^1.3.14",
-    "@vitest/coverage-v8": "^4.0.16",
-    "typescript": "^7.0.2",
-    "vite": "^8.2.1",
-    "vitest": "^4.1.10"
+    "fflate": "^0.8.3",
+    "lint-staged": "^17.3.0",
+    "oxfmt": "^0.63.0",
+    "oxlint": "^1.78.0",
+    "typescript": "^7.0.2"
   },
   "overrides": {
     "@comfyorg/comfyui-desktop-bridge-types": "0.1.2"
+  },
+  "lint-staged": {
+    "*": "oxfmt --no-error-on-unmatched-pattern",
+    "*.py": [
+      "uv run ruff check --fix",
+      "uv run ruff format"
+    ]
   }
 }

@@ -2,7 +2,7 @@
 
 Starter template for one publishable ComfyUI custom node pack with:
 
-- TypeScript/Vite frontend code in `frontend/`
+- TypeScript frontend code bundled with Bun in `frontend/`
 - Python node code in `backend/`
 - repo-local ComfyUI E2E testing under `.e2e/`
 
@@ -33,19 +33,19 @@ pnpm test:e2e
 
 Replace the template placeholders before publishing:
 
-| File | Replace |
-| --- | --- |
-| `package.json` | `name`, `description`, `author` |
-| `pyproject.toml` | project `name`, `description`, `Repository`, `PublisherId`, `DisplayName`, `Icon` |
-| `LICENSE` | `Your Name` |
-| `assets/icon.svg` | default icon artwork |
-| `frontend/src/constants.ts` | `SETTINGS_PREFIX` |
-| `frontend/src/index.ts` | extension `name`, homepage URL, version label if needed |
-| `backend/__init__.py` | `TemplateExampleNormalizeText`, display name, exported node mappings |
-| `backend/nodes/example_normalize_text.py` | example node class, category, inputs, execution logic |
-| `tests/backend/*` and `tests/python/*` | example node ids and expected display names |
-| `tests/e2e/smoke.spec.ts` | `EXAMPLE_NODE_ID` if you rename or remove the example backend node |
-| `docs/TESTING.md` | mounted custom node path if you change the package slug |
+| File                                      | Replace                                                                           |
+| ----------------------------------------- | --------------------------------------------------------------------------------- |
+| `package.json`                            | `name`, `description`, `author`                                                   |
+| `pyproject.toml`                          | project `name`, `description`, `Repository`, `PublisherId`, `DisplayName`, `Icon` |
+| `LICENSE`                                 | `Your Name`                                                                       |
+| `assets/icon.svg`                         | default icon artwork                                                              |
+| `frontend/src/constants.ts`               | `SETTINGS_PREFIX`                                                                 |
+| `frontend/src/index.ts`                   | extension `name`, homepage URL, version label if needed                           |
+| `backend/__init__.py`                     | `TemplateExampleNormalizeText`, display name, exported node mappings              |
+| `backend/nodes/example_normalize_text.py` | example node class, category, inputs, execution logic                             |
+| `tests/backend/*` and `tests/python/*`    | example node ids and expected display names                                       |
+| `tests/e2e/smoke.spec.ts`                 | `EXAMPLE_NODE_ID` if you rename or remove the example backend node                |
+| `docs/TESTING.md`                         | mounted custom node path if you change the package slug                           |
 
 After changing package metadata, run:
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "ComfyUI Template Maintenance"
+  short_description: "Develop and maintain this ComfyUI node template"
+  default_prompt: "Use $comfyui-template-maintenance to develop, validate, build, or maintain this ComfyUI custom node template."

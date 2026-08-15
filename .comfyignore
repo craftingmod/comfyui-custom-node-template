@@ -1,0 +1,18 @@
+# Ignore every root entry by default
+/*
+
+# Required ComfyUI entry point
+!/__init__.py
+
+# Runtime directories
+!/assets/
+!/assets/**
+!/backend/
+!/backend/**
+!/dist/
+!/dist/**
+
+# Distribution metadata
+!/LICENSE
+!/pyproject.toml
+!/README.md

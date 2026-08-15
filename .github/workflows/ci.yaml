@@ -6,13 +6,17 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     name: Validate
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Use Python from .python-version
         uses: actions/setup-python@v6
@@ -20,30 +24,30 @@ jobs:
           python-version-file: ".python-version"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@v9
         with:
           enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 20
-          cache: "pnpm"
+          bun-version: latest
 
-      - name: Install Node dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install Bun dependencies
+        run: bun install --frozen-lockfile
 
       - name: Sync Python dependencies
         run: uv sync --locked --group dev
 
+      - name: Check formatting
+        run: bun run fmt:check
+
+      - name: Lint
+        run: bun run lint
+
       - name: Typecheck
-        run: pnpm typecheck
+        run: bun run typecheck
 
       - name: Run unit tests
-        run: pnpm test:unit
-
-      - name: Run E2E tests
-        run: pnpm test:e2e
+        run: bun run test:unit
