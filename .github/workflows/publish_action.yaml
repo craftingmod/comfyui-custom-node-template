@@ -15,7 +15,6 @@ jobs:
   publish-node:
     name: Publish Custom Node to registry
     needs: validate
-    if: ${{ github.repository != 'craftingmod/comfyui-custom-node-template' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
