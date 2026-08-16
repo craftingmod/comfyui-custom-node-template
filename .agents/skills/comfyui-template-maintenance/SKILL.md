@@ -102,6 +102,15 @@ Expect the check to reject template placeholder values, empty release metadata, 
 
 The tag-triggered Registry workflow must run `bun run release:check` after installing Bun dependencies and before building or invoking the Registry publish action. The source template repository `craftingmod/comfyui-custom-node-template` must skip the Registry publish job while still running the reusable CI workflow for its tags; repositories created from the template retain tag-triggered publishing. Keep release-validation tests covering initialized metadata, template placeholders, and identity mismatches whenever this validation changes.
 
+## Prepare a GitHub Release asset
+
+Run `bun run release:github` only in the tag-triggered GitHub Actions job. It requires
+`GITHUB_REF_NAME` and `GITHUB_OUTPUT`, verifies that the tag is exactly
+`v<project.version>`, runs `bun run build:custom-node`, verifies the generated
+`build/<project.name>-<project.version>.zip`, and writes its relative path as the
+`archive` step output. Keep the tag and archive-path derivation covered by frontend
+unit tests.
+
 ## Bump the patch version
 
 Inspect `git status --short`, then run `bun run version:bump`.
