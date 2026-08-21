@@ -16,4 +16,4 @@ Icon = "https://cdn.jsdelivr.net/gh/your-name/your-repo/assets/icon.svg"
 includes = ["dist"]
 
 [dependency-groups]
-dev = ["pytest>=9.1.1", "ruff>=0.16.3"]
+dev = ["pytest>=9.1.1", "pytest-xdist>=3.8.0", "ruff>=0.16.3"]
