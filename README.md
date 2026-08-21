@@ -11,7 +11,7 @@ A template for one publishable ComfyUI custom node pack. It combines:
 
 - Python 3.12
 - [uv](https://docs.astral.sh/uv/)
-- Bun 1.3.14
+- Bun 1.4+
 
 Install the locked dependencies:
 
