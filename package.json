@@ -14,6 +14,7 @@
   ],
   "type": "module",
   "scripts": {
+    "ci:test": "bun scripts/ci-test.ts",
     "dev": "bun run typecheck && bun frontend/dev.ts",
     "deploy:dev": "bun run build && bun scripts/deploy-dev.ts",
     "deploy:local": "bun scripts/deploy-local.ts",
@@ -32,7 +33,7 @@
     "test": "bun run test:unit",
     "test:frontend": "bun test --preload ./frontend/test/setup.ts --parallel frontend/test",
     "test:backend": "uv run pytest -n auto tests/python tests/backend -q",
-    "test:unit": " bun run --parallel test:frontend test:backend",
+    "test:unit": "bun scripts/ci-test.ts -- --no-dots",
     "test:watch": "bun test --preload ./frontend/test/setup.ts --watch frontend/test",
     "test:coverage": "bun test --preload ./frontend/test/setup.ts --coverage frontend/test",
     "typecheck": "tsc --noEmit -p ./tsconfig.json && tsc --noEmit -p ./frontend/src/tsconfig.json && tsc --noEmit -p ./frontend/test/tsconfig.json",

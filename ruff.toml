@@ -29,6 +29,9 @@ exclude = [
   "venv",
 ]
 
+# Pin cache dir
+cache-dir = ".ci-cache/ruff"
+
 # Same as Black.
 line-length = 88
 indent-width = 2
