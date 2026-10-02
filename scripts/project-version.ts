@@ -10,7 +10,7 @@ export async function getProjectVersion(projectDir: string): Promise<string> {
 }
 
 export function registryVersionSource(version: string): string {
-  if (!/^\d+\.\d+\.\d+(?:[.+-][0-9A-Za-z]+)*$/.test(version)) {
+  if (!/^\d+\.\d+\.\d+(?:(?:a|b|rc)\d+)?(?:[.+-][0-9A-Za-z]+)*$/.test(version)) {
     throw new Error(`Expected an X.Y.Z version with an optional suffix, got ${version}.`)
   }
   return `__version__ = "${version}"\n`

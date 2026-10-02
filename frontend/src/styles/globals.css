@@ -9,15 +9,20 @@
   --template-focus-width: 2px;
   --template-heading-size: 1.125rem;
   --template-note-size: 0.875rem;
-}
 
-:root {
+  /* global variable in this node */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
   --space-2xl: 48px;
+}
+
+/* global variable shares all ComfyUI nodes, Use with CAUTION ! */
+
+:root {
+  --example-value: "example";
 }
 
 /* Global rules are limited to this extension's native DOM island. */

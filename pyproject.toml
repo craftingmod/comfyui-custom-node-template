@@ -19,6 +19,9 @@ packages = ["backend"]
 [tool.uv-dynamic-versioning]
 vcs = "git"
 strict = true
+# Keep named tag suffixes such as -react as local metadata, not prerelease stages.
+pattern = '(?i)^v(?P<base>\d+\.\d+\.\d+)(?:[-._]?(?P<stage>alpha|beta|preview|pre|rc|a|b|c|post|rev|r|dev)[-._]?(?P<revision>\d+)?)?(?:[-+](?P<tagged_metadata>[a-z0-9]+(?:[-._][a-z0-9]+)*))?$'
+tagged-metadata = true
 
 [project.urls]
 Repository = "https://github.com/your-name/your-repo"

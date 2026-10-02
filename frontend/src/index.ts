@@ -10,7 +10,9 @@ app.registerExtension({
   name: `${PROJECT_ID}.extension`,
   setup() {
     installStylesheet()
-    app.extensionManager.registerSidebarTab(createReactSidebar())
+    app.extensionManager.registerSidebarTab(
+      createReactSidebar(), // Replace this for native-DOM project
+    )
   },
   settings: [
     {

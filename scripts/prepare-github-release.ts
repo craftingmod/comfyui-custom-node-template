@@ -3,7 +3,7 @@ import Path from "node:path"
 
 import { $ } from "bun"
 
-import { projectArchiveName } from "./project-version.ts"
+import { getProjectVersion, projectArchiveName } from "./project-version.ts"
 
 type ProjectConfig = {
   project?: { name?: unknown }
@@ -26,13 +26,17 @@ function requireString(value: unknown, field: string): string {
 export function githubReleaseInfo(
   pyprojectSource: string,
   githubRefName: string,
+  projectVersion?: string,
 ): GitHubReleaseInfo {
   const pyproject = Bun.TOML.parse(pyprojectSource) as ProjectConfig
   const projectName = requireString(pyproject.project?.name, "project.name")
-  const version = /^v(\d+\.\d+\.\d+(?:[.+-][0-9A-Za-z]+)*)$/.exec(githubRefName)?.[1]
-  if (!version) {
+  const tagVersion = /^v(\d+\.\d+\.\d+(?:(?:a|b|rc)\d+)?(?:[.+-][0-9A-Za-z]+)*)$/.exec(
+    githubRefName,
+  )?.[1]
+  if (!tagVersion) {
     throw new Error(`Expected release tag vX.Y.Z with an optional suffix, got ${githubRefName}.`)
   }
+  const version = projectVersion ?? tagVersion
 
   return {
     archivePath: `build/${projectArchiveName(pyproject.tool?.comfy?.DisplayName, version)}`,
@@ -54,7 +58,11 @@ export async function prepareGitHubRelease(
   }
 
   const pyprojectSource = await fs.readFile(Path.join(projectRoot, "pyproject.toml"), "utf8")
-  const release = githubReleaseInfo(pyprojectSource, githubRefName)
+  const release = githubReleaseInfo(
+    pyprojectSource,
+    githubRefName,
+    await getProjectVersion(projectRoot),
+  )
 
   await $`bun run build:custom-node`.cwd(projectRoot)
 

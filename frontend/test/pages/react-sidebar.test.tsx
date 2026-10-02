@@ -1,8 +1,7 @@
 import { expect, it } from "bun:test"
 
-import { act } from "react"
-
 import { createReactSidebar } from "@pages/react-sidebar.tsx"
+import { act } from "react"
 
 it("mounts interactive React UI and cleans up on replacement and destruction", async () => {
   const sidebar = createReactSidebar()
