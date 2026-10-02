@@ -4,8 +4,12 @@ export default defineConfig({
   categories: {
     correctness: "warn",
   },
-  ignorePatterns: [".agents/**"],
-  plugins: ["import", "react"],
+  options: {
+    typeAware: true,
+    typeCheck: true,
+  },
+  ignorePatterns: [".agents/**", "docs/**"],
+  plugins: ["import", "typescript", "oxc", "react"],
   // https://oxc.rs/docs/guide/usage/linter/rules.html
   rules: {
     "eslint/no-unused-expressions": [
@@ -22,5 +26,8 @@ export default defineConfig({
         checkTypeImports: true,
       },
     ],
+    "import/consistent-type-specifier-style": ["warn", "prefer-top-level-if-only-type-imports"],
+    /* Too much effort on react */
+    "typescript/unbound-method": "off",
   },
 })
