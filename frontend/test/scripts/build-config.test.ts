@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test"
 import path from "node:path"
 
-import { FRONTEND_ENTRY, FRONTEND_ROOT, OUTPUT_DIRECTORY, buildConfig } from "../build.ts"
+import { FRONTEND_ENTRY, FRONTEND_ROOT, OUTPUT_DIRECTORY, buildConfig } from "../../build.ts"
 
 describe("Bun build config", () => {
   it("builds the frontend entry into the repository dist directory", () => {

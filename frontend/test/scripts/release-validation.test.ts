@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test"
 
-import { validateReleaseMetadata } from "../../scripts/validate-release.ts"
+import { validateReleaseMetadata } from "@scripts/validate-release.ts"
 
 const initializedMetadata = {
   packageName: "image-tools",

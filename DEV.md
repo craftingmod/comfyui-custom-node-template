@@ -28,7 +28,8 @@ Run `bun run init:template`. It asks for:
 5. Comfy Registry Publisher ID
 
 The ID sets the package name, frontend setting IDs, and example node namespace.
-The name sets the display labels. Publisher ID is your Comfy Registry publisher,
+The name sets the display labels and README title. It must be valid in a ZIP
+filename. Publisher ID is your Comfy Registry publisher,
 which may differ from your GitHub username.
 
 You can also pass the values through PowerShell:

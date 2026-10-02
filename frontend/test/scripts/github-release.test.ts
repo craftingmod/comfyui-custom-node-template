@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test"
 
-import { githubReleaseInfo } from "../../scripts/prepare-github-release.ts"
+import { githubReleaseInfo } from "@scripts/prepare-github-release.ts"
 
 const pyproject = `
 [project]

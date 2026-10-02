@@ -1,7 +1,8 @@
 import { expect, it } from "bun:test"
 
-import { collectClassNames, renderDeclaration } from "../../scripts/create-modulecss-types.ts"
-import { installStylesheet } from "../src/stylesheet.ts"
+import { collectClassNames, renderDeclaration } from "@scripts/create-modulecss-types.ts"
+
+import { installStylesheet } from "@/stylesheet.ts"
 
 it("generates sorted declarations from nested CSS selectors, excluding declaration strings", async () => {
   const classes = await collectClassNames(`

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test"
 
-import { getComfyUIPath, parseJsonc } from "../../scripts/local-comfyui.ts"
+import { getComfyUIPath, parseJsonc } from "@scripts/local-comfyui.ts"
 
 const originalComfyUIPath = process.env.COMFYUI_PATH
 

@@ -29,9 +29,9 @@ def test_example_normalize_text_node_declares_multiline_text_input():
 
   schema = module.ExampleNormalizeTextNode.define_schema()
 
-  assert schema.node_id == "comfyui-custom-node-template.NormalizeText"
-  assert schema.display_name == "My Custom Node Normalize Text"
-  assert schema.category == "My Custom Node/examples"
+  assert schema.node_id == f"{module.PROJECT_ID}.NormalizeText"
+  assert schema.display_name == f"{module.PROJECT_NAME} Normalize Text"
+  assert schema.category == f"{module.PROJECT_NAME}/examples"
   assert len(schema.inputs) == 1
   assert schema.inputs[0].id == "text"
   assert schema.inputs[0].default == ""

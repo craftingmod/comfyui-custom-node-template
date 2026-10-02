@@ -25,3 +25,9 @@ for every padding, margin, and gap; define new shared spacing tokens in globals
 when needed. The React sidebar's two buttons compose `controlBase` from
 `styles/controls.module.css`. Its imperative note is a sibling of the React host
 under `[data-template-theme]`, so both inherit tokens without sharing DOM ownership.
+
+## Directory Structure
+
+- `components/`: React components with reuseable
+- `pages/`: A root react page/component with not reuseable
+- `styles/`: common styles which uses across components.

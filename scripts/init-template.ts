@@ -2,6 +2,8 @@ import fs from "node:fs/promises"
 import Path from "node:path"
 import { createInterface } from "node:readline/promises"
 
+import { projectArchiveName } from "./project-version.ts"
+
 const projectDir = Path.resolve(import.meta.dir, "../")
 
 function requireMatch(value: string, pattern: RegExp, message: string): string {
@@ -40,6 +42,7 @@ export function validateProjectName(value: string): string {
     )
   }
 
+  projectArchiveName(projectName, "0.0.0")
   return projectName
 }
 
@@ -99,17 +102,27 @@ export async function initializeTemplate(
   githubUsername: string,
   githubRepo: string,
   publisherId: string,
+  projectRoot = projectDir,
 ): Promise<void> {
-  const pyprojectPath = Path.join(projectDir, "pyproject.toml")
-  const packagePath = Path.join(projectDir, "package.json")
-  const constantsPath = Path.join(projectDir, "frontend", "src", "constants.ts")
-  const nodePath = Path.join(projectDir, "backend", "nodes", "example_normalize_text.py")
-  const [originalPyproject, originalPackage, originalConstants, originalNode] = await Promise.all([
-    fs.readFile(pyprojectPath, "utf8"),
-    fs.readFile(packagePath, "utf8"),
-    fs.readFile(constantsPath, "utf8"),
-    fs.readFile(nodePath, "utf8"),
-  ])
+  projectId = validateProjectId(projectId)
+  projectName = validateProjectName(projectName)
+  githubUsername = validateGitHubUsername(githubUsername)
+  githubRepo = validateGitHubRepo(githubRepo)
+  publisherId = validatePublisherId(publisherId)
+
+  const pyprojectPath = Path.join(projectRoot, "pyproject.toml")
+  const packagePath = Path.join(projectRoot, "package.json")
+  const constantsPath = Path.join(projectRoot, "frontend", "src", "constants.ts")
+  const nodePath = Path.join(projectRoot, "backend", "nodes", "example_normalize_text.py")
+  const readmePath = Path.join(projectRoot, "README.md")
+  const [originalPyproject, originalPackage, originalConstants, originalNode, originalReadme] =
+    await Promise.all([
+      fs.readFile(pyprojectPath, "utf8"),
+      fs.readFile(packagePath, "utf8"),
+      fs.readFile(constantsPath, "utf8"),
+      fs.readFile(nodePath, "utf8"),
+      fs.readFile(readmePath, "utf8"),
+    ])
 
   const projectSectionPattern = /(^\[project\]\s*$)([\s\S]*?)(?=^\[|(?![\s\S]))/m
   const projectSection = originalPyproject.match(projectSectionPattern)
@@ -181,11 +194,17 @@ export async function initializeTemplate(
     "PROJECT_NAME in the example backend node",
   )
 
+  if (!/^# .+$/m.test(originalReadme)) {
+    throw new Error("Could not find the project title in README.md")
+  }
+  const updatedReadme = originalReadme.replace(/^# .+$/m, () => `# ${projectName}`)
+
   await Promise.all([
     fs.writeFile(pyprojectPath, updatedPyproject),
     fs.writeFile(packagePath, updatedPackage),
     fs.writeFile(constantsPath, updatedConstants),
     fs.writeFile(nodePath, updatedNode),
+    fs.writeFile(readmePath, updatedReadme),
   ])
 }
 
@@ -216,17 +235,21 @@ async function main(): Promise<void> {
     answers = [lines[0]!, lines[1]!, lines[2]!, lines[3]!, lines[4]!]
   }
 
-  const projectId = validateProjectId(answers[0])
-  const projectName = validateProjectName(answers[1])
-  const githubUsername = validateGitHubUsername(answers[2])
-  const githubRepo = validateGitHubRepo(answers[3])
-  const publisherId = validatePublisherId(answers[4])
+  const projectId = answers[0].trim()
+  const projectName = answers[1].trim()
+  const githubUsername = answers[2].trim()
+  const githubRepo = answers[3].trim()
+  const publisherId = answers[4].trim()
 
   await initializeTemplate(projectId, projectName, githubUsername, githubRepo, publisherId)
   console.log(
     `Initialized ${projectName} (${projectId}) for https://github.com/${githubUsername}/${githubRepo}.`,
   )
+  console.log(
+    "Versions come from Git tags. In a new repository, create an initial tag (for example, `git tag v0.1.0`) before running `uv lock`.",
+  )
   console.log("Run `uv lock` and `bun install` to refresh the lockfiles.")
+  console.log("Update the project description, LICENSE copyright holder, and assets/icon.svg.")
 }
 
 if (import.meta.main) {

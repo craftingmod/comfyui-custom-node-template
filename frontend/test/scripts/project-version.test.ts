@@ -1,7 +1,7 @@
 import { expect, it } from "bun:test"
 
-import { githubReleaseInfo } from "../../scripts/prepare-github-release.ts"
-import { projectArchiveName, registryVersionSource } from "../../scripts/project-version.ts"
+import { githubReleaseInfo } from "@scripts/prepare-github-release.ts"
+import { projectArchiveName, registryVersionSource } from "@scripts/project-version.ts"
 
 const pyprojectSource = '[project]\nname = "example"\n[tool.comfy]\nDisplayName = "Example Node"'
 
