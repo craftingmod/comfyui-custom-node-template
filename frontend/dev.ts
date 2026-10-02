@@ -20,6 +20,8 @@ const child = Bun.spawn(
     buildConfig.target ?? "browser",
     "--format",
     buildConfig.format ?? "esm",
+    "--define",
+    'process.env.NODE_ENV="development"',
     ...(buildConfig.external ?? []).flatMap((module) => ["--external", module]),
     "--entry-naming",
     naming.entry,
@@ -27,8 +29,7 @@ const child = Bun.spawn(
     naming.chunk,
     "--asset-naming",
     naming.asset,
-    "--sourcemap",
-    "linked",
+    "--sourcemap=linked",
     "--watch",
   ],
   {

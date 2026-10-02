@@ -5,7 +5,7 @@ export default defineConfig({
     correctness: "warn",
   },
   ignorePatterns: [".agents/**"],
-  plugins: ["import"],
+  plugins: ["import", "react"],
   // https://oxc.rs/docs/guide/usage/linter/rules.html
   rules: {
     "eslint/no-unused-expressions": [

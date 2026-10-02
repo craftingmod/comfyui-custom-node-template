@@ -25,4 +25,32 @@ describe("Bun build config", () => {
   it("keeps ComfyUI runtime modules external", () => {
     expect(buildConfig.external).toEqual(["*/scripts/app.js", "*/scripts/api.js"])
   })
+
+  it("bundles React and TSX for browsers without a Node.js environment dependency", async () => {
+    const result = await Bun.build({ ...buildConfig, outdir: undefined })
+    expect(result.success).toBeTrue()
+    expect(result.logs).toHaveLength(0)
+    const bundle = await result.outputs[0]!.text()
+    expect(bundle).not.toContain("process.env.NODE_ENV")
+    expect(bundle).not.toMatch(/(?:from|import)\s*["']react(?:-dom)?(?:\/[^"']*)?["']/)
+    expect(bundle.includes("Minified React error #")).toBeTrue()
+    expect(
+      bundle.includes("The current testing environment is not configured to support act"),
+    ).toBeFalse()
+    expect(bundle).toContain("Count:")
+
+    const stylesheet = result.outputs.find((output) => output.path.endsWith("index.css"))
+    expect(stylesheet).toBeDefined()
+    const css = await stylesheet!.text()
+    const classes = css.match(/\.(?:panel|heading|counterButton)_[\w-]+/g) ?? []
+    expect(new Set(classes).size).toBe(3)
+    for (const className of classes) {
+      expect(bundle.includes(className.slice(1))).toBeTrue()
+    }
+    const sharedControlClass = css.match(/\.(controlBase_[\w-]+)/)?.[1]
+    expect(sharedControlClass).toBeDefined()
+    expect(bundle.includes(sharedControlClass!)).toBeTrue()
+    expect(css.includes("--space-md:16px")).toBeTrue()
+    expect(css.includes("[data-template-theme] [data-template-native-note]")).toBeTrue()
+  })
 })

@@ -4,12 +4,15 @@
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ES2025"],
     "module": "ESNext",
+    "jsx": "react-jsx",
     "types": ["@comfyorg/comfyui-frontend-types"],
 
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "allowArbitraryExtensions": true,
+    "rootDirs": [".", "../.generated"],
     "resolveJsonModule": true,
     "isolatedModules": true,
 
@@ -19,5 +22,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "**/*.tsx", "../.generated/**/*.ts"]
 }

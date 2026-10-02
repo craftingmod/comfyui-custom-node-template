@@ -2,15 +2,25 @@
 
 Single publishable ComfyUI custom node pack.
 
-- Frontend runtime code lives in `frontend/`
-- Backend node code lives in `backend/`
-- Root `__init__.py` is the thin ComfyUI entry shim
-- Use repo commands first: `bun run typecheck`, `bun run ci:test`, `bun run lint`, and `bun run fmt:check`
-- Use `uv` for Python dependency sync and Python execution outside repo scripts
-- Use `bun run ci:test` as the canonical combined frontend/backend test command. `bun run test` and `bun run test:unit` remain aliases for humans.
-- Do not create task-specific cache or temp directories. `ci:test` owns `.ci-cache/` for reusable caches and `.ci-test-tmp/` for an automatically cleaned per-run pytest directory.
-- `ci:test` suppresses successful test logs and forwards full child output only when a stage fails.
-- For focused backend debugging, `bun run test:backend` is allowed, but full validation should use `bun run ci:test` so the repository-local cache and temp paths are applied.
+## General
 
-For testing details, see `docs/TESTING.md`.
-For ComfyUI API changes, verify current official docs before changing architecture or advanced frontend hooks.
+- Runtime code: `frontend/` for frontend, `backend/` for backend, and root `__init__.py` as the thin ComfyUI entry shim.
+- Use `uv` for Python dependency sync and execution outside repo scripts.
+- Keep agent-specific docs and implementation plans in `docs/agent/`.
+- Verify current official docs before ComfyUI API changes.
+- In Korean translations, use `,` instead of `·`.
+
+## Validation
+
+- Run `bun run validate:agent` before finishing feature additions or substantial runtime, architecture, node contract, build, or dependency changes. Fix introduced failures and report remaining failures or environment blockers.
+- For small documentation, formatting, or localized visual-only changes, validate only when explicitly requested.
+- `bun run fix` auto-fixes some lint/format issues. Review the diff and fix remaining issues manually; it does not replace validation.
+- See `docs/TESTING.md` for manual runtime testing.
+
+## Frontend
+
+- For React changes, consult `vercel-react-best-practices` and `web-design-guidelines`.
+- Use CSS Modules for React components and global CSS for tokens/native DOM islands.
+- Define shared runtime values and root spacing tokens in `frontend/src/styles/globals.css`; share reusable style rules with `composes`.
+- Use `var(--space-*)` for all `padding`, `margin`, and `gap`. Reuse existing tokens first; add shared tokens when needed instead of using literal spacing values.
+- Example spacing scale (extend as needed): `--space-xs` (4px), `--space-sm` (8px), `--space-md` (16px), `--space-lg` (24px), `--space-xl` (32px), `--space-2xl` (48px).

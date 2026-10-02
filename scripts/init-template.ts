@@ -30,8 +30,8 @@ export function validateProjectId(value: string): string {
 
 export function validateProjectName(value: string): string {
   const projectName = value.trim()
-  const hasControlCharacter = [...projectName].some((character) => {
-    const codePoint = character.codePointAt(0)!
+  const hasControlCharacter = projectName.split("").some((character) => {
+    const codePoint = character.charCodeAt(0)
     return codePoint < 32 || codePoint === 127
   })
   if (projectName.length === 0 || projectName.length > 100 || hasControlCharacter) {

@@ -4,5 +4,5 @@
     "types": ["bun", "@comfyorg/comfyui-frontend-types"],
     "noEmit": true
   },
-  "include": ["./**/*.ts", "../src/**/*.d.ts"]
+  "include": ["./**/*.ts", "./**/*.tsx", "../src/**/*.d.ts", "../../scripts/types/**/*.d.ts"]
 }

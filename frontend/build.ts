@@ -12,6 +12,7 @@ export const buildConfig = {
   target: "browser",
   format: "esm",
   minify: true,
+  define: { "process.env.NODE_ENV": '"production"' },
   external: ["*/scripts/app.js", "*/scripts/api.js"],
   naming: {
     entry: "[name].[ext]",

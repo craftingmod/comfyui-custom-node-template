@@ -3,7 +3,7 @@
 A template for one publishable ComfyUI custom node pack. It combines:
 
 - ComfyUI V3 Python nodes in `backend/`
-- a TypeScript frontend bundled with Bun from `frontend/` to `dist/`
+- a TypeScript + React frontend bundled with Bun from `frontend/` to `dist/`
 - Ruff, Oxlint, Oxfmt, Pytest, and Bun Test validation
 - Registry ZIP and release automation in `scripts/`
 
@@ -104,6 +104,57 @@ The root `__init__.py` exposes `comfy_entrypoint()` for the V3 backend and
 `TemplateExtension.get_node_list()` result in `backend/__init__.py`.
 
 See [docs/TESTING.md](docs/TESTING.md) for the complete validation commands.
+
+## React UI
+
+`frontend/src/react-sidebar.tsx` is a small interactive sidebar example registered
+in `frontend/src/index.ts`. Replace it with your own components, or remove its
+registration when your extension does not need a sidebar.
+
+Write components in `.tsx` files. React and ReactDOM are bundled into `dist/index.js`;
+ComfyUI provides only the external `app` and `api` modules. The production build
+uses React's production runtime, while `bun run dev` uses its development runtime
+and linked source maps. Reload the ComfyUI browser page after a rebuild.
+
+Each React root owns its container and is unmounted when the sidebar is destroyed
+or rendered into a replacement container. Keep workflow values and serialization
+in the node/controller; use component state for local UI interactions.
+
+Use CSS Modules alongside components:
+
+```tsx
+import styles from "./react-sidebar.module.css"
+
+;<section className={styles.panel}>...</section>
+```
+
+`bun run build:css-type` generates class declarations under the ignored
+`frontend/.generated/` directory. `typecheck`, `build`, and `dev` generate them
+before checking TypeScript. After adding or renaming classes during a watch session,
+run `build:css-type` again. Check declarations without writing files with
+`bun run build:css-type --check`.
+
+Bun bundles imported styles into `dist/index.css`. `frontend/src/stylesheet.ts`
+loads it relative to the extension bundle URL. Use `bun run lint:css` for CSS
+checks; the normal lint commands include Stylelint. Keep global CSS for shared
+tokens and native DOM areas, and component styles in `.module.css` files.
+
+The sidebar demonstrates both styling paths:
+
+- `frontend/src/styles/globals.css` defines the root `--space-*` scale and scoped
+  styles for a native DOM note, plus theme/runtime values under
+  `[data-template-theme]`, inherited by both React and native DOM. Reuse spacing
+  tokens for all padding, margin, and gap; add a shared token here when an existing
+  value does not fit.
+- `frontend/src/styles/controls.module.css` defines `controlBase`, shared by the
+  counter and reset buttons through cross-file `composes` in
+  `react-sidebar.module.css`. Composed classes can contain multiple class tokens;
+  pass them directly to React's `className`.
+
+The sidebar shell contains a dedicated React host and a separate imperative note.
+React owns only its host; sidebar cleanup removes the shell, including the native
+note, without touching unrelated ComfyUI container children. Global selectors
+target the note's data attribute rather than resetting ComfyUI-wide elements.
 
 ## Package and publish
 
