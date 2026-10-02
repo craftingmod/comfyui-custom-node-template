@@ -13,8 +13,7 @@ wheels = [
 
 [[package]]
 name = "comfyui-custom-node-template"
-version = "1.0.0"
-source = { virtual = "." }
+source = { editable = "." }
 
 [package.dev-dependencies]
 dev = [

@@ -1,6 +1,7 @@
+import { createReactSidebar } from "@pages/react-sidebar.tsx"
+
 import { app } from "../../scripts/app.js"
 import { PROJECT_ID, PROJECT_NAME, SETTINGS_IDS } from "./constants.ts"
-import { createReactSidebar } from "./pages/react-sidebar.tsx"
 import { installStylesheet } from "./stylesheet.ts"
 
 import "./styles/globals.css"

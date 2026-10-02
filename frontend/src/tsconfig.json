@@ -13,6 +13,11 @@
     "allowImportingTsExtensions": true,
     "allowArbitraryExtensions": true,
     "rootDirs": [".", "../.generated"],
+    "paths": {
+      "@pages/*": ["./pages/*"],
+      "@components/*": ["./components/*"],
+      "@/*": ["./*", "../.generated/*"]
+    },
     "resolveJsonModule": true,
     "isolatedModules": true,
 

@@ -1,10 +1,24 @@
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
 [project]
 name = "comfyui-custom-node-template"
 description = "A Bun and Python template for a ComfyUI V3 custom node"
-version = "1.0.0"
+dynamic = ["version"]
 requires-python = ">=3.12"
 readme = "README.md"
 license = { file = "LICENSE" }
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend"]
+
+[tool.uv-dynamic-versioning]
+vcs = "git"
+strict = true
 
 [project.urls]
 Repository = "https://github.com/your-name/your-repo"
@@ -13,7 +27,10 @@ Repository = "https://github.com/your-name/your-repo"
 PublisherId = "your-username"
 DisplayName = "My Custom Node"
 Icon = "https://cdn.jsdelivr.net/gh/your-name/your-repo/assets/icon.svg"
-includes = ["dist"]
+includes = ["dist", "backend/_version.py"]
+
+[tool.comfy.version]
+path = "backend/_version.py"
 
 [dependency-groups]
 dev = ["pytest>=9.1.1", "pytest-xdist>=3.8.0", "ruff>=0.16.3"]

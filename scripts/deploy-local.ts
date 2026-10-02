@@ -10,8 +10,12 @@ import {
   projectDir,
   validateComfyUIPath,
 } from "./local-comfyui.ts"
+import { getProjectVersion, projectArchiveName } from "./project-version.ts"
 
-type ProjectConfig = { project?: { name?: unknown; version?: unknown } }
+type ProjectConfig = {
+  project?: { name?: unknown }
+  tool?: { comfy?: { DisplayName?: unknown } }
+}
 
 function requireString(value: unknown, field: string): string {
   if (typeof value !== "string" || !value.trim()) {
@@ -28,7 +32,8 @@ async function main(): Promise<void> {
     await fs.readFile(Path.join(projectDir, "pyproject.toml"), "utf8"),
   ) as ProjectConfig
   const projectName = requireString(pyproject.project?.name, "project.name")
-  const version = requireString(pyproject.project?.version, "project.version")
+  const version = await getProjectVersion(projectDir)
+  const archiveName = projectArchiveName(pyproject.tool?.comfy?.DisplayName, version)
   const customNodesPath = Path.join(comfyuiPath, "custom_nodes")
   const destinationPath = Path.join(customNodesPath, projectName)
   await assertSafeDeployTarget(customNodesPath, destinationPath)
@@ -36,7 +41,7 @@ async function main(): Promise<void> {
   $.cwd(projectDir)
   await $`bun run build:custom-node`
 
-  const archivePath = Path.join(projectDir, "build", `${projectName}-${version}.zip`)
+  const archivePath = Path.join(projectDir, "build", archiveName)
   const archive = unzipSync(new Uint8Array(await fs.readFile(archivePath)))
   const stagingPath = Path.join(customNodesPath, `.${projectName}.deploy-${process.pid}`)
   const backupPath = Path.join(customNodesPath, `.${projectName}.backup-${process.pid}`)
