@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
@@ -47,6 +49,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
