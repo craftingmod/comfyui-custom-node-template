@@ -110,21 +110,30 @@ import a component from `@/components/Button.tsx` or constants from `@/constants
 CSS Module imports can use the same alias; their types come from
 `frontend/.generated/`.
 
-React and ReactDOM are bundled into `dist/index.js`; `app` and `api` come from
-ComfyUI. `bun run build` uses React's production runtime. `bun run dev` uses the
-development runtime with source maps.
-
 Each React root owns its host and unmounts when the sidebar is destroyed or
 rendered again. Keep workflow values and serialization in the node/controller.
 Use React state for local UI interactions. The example's native DOM note sits
 outside the React host and is removed with the sidebar shell.
 
+### Styles
+
 Use `.module.css` files for components and `frontend/src/styles/globals.css` for
 shared tokens and native DOM styles. Use `0` for zero spacing and `var(--space-*)`
 for nonzero padding, margin, and gap. Add a shared token when needed.
 
+Declare shared tokens under `[data-template-theme]`, not `:root`, to avoid
+affecting ComfyUI or other extensions. Add `data-template-theme` to each UI root
+wrapper so React components and native DOM islands inherit the tokens. Modal or
+portal wrappers rendered outside those roots need the attribute as well.
+
 Share CSS rules with `composes`; `frontend/src/styles/controls.module.css` has the
 button example. Pass composed class strings directly to React's `className`.
+
+### Build
+
+React and ReactDOM are bundled into `dist/index.js`; `app` and `api` come from
+ComfyUI. `bun run build` uses React's production runtime. `bun run dev` uses the
+development runtime with source maps.
 
 `typecheck`, `build`, and `dev` generate CSS declarations in `frontend/.generated/`.
 After adding or renaming classes while watching, run `bun run build:css-type`.
