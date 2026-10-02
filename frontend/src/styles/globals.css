@@ -12,7 +12,6 @@
 }
 
 :root {
-  --space-none: 0;
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
@@ -23,7 +22,7 @@
 
 /* Global rules are limited to this extension's native DOM island. */
 [data-template-theme] [data-template-native-note] {
-  margin: var(--space-none) var(--space-md) var(--space-md);
+  margin: 0 var(--space-md) var(--space-md);
   padding: var(--space-sm) var(--space-md);
   border-inline-start: var(--template-border-width) solid var(--template-border);
   color: var(--template-muted-text);

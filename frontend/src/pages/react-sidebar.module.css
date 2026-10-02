@@ -6,7 +6,7 @@
 }
 
 .heading {
-  margin: var(--space-none);
+  margin: 0;
   font-size: var(--template-heading-size);
 }
 
@@ -17,10 +17,10 @@
 }
 
 .counterButton {
-  composes: controlBase from "./styles/controls.module.css";
+  composes: controlBase from "../styles/controls.module.css";
   font-weight: 600;
 }
 
 .resetButton {
-  composes: controlBase from "./styles/controls.module.css";
+  composes: controlBase from "../styles/controls.module.css";
 }

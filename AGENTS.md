@@ -19,8 +19,9 @@ Single publishable ComfyUI custom node pack.
 
 ## Frontend
 
+- Keep reusable React components in `frontend/src/components/` and React root components, including pages, modals, and sidebar roots, in `frontend/src/pages/`.
 - For React changes, consult `vercel-react-best-practices` and `web-design-guidelines`.
 - Use CSS Modules for React components and global CSS for tokens/native DOM islands.
 - Define shared runtime values and root spacing tokens in `frontend/src/styles/globals.css`; share reusable style rules with `composes`.
-- Use `var(--space-*)` for all `padding`, `margin`, and `gap`. Reuse existing tokens first; add shared tokens when needed instead of using literal spacing values.
+- Use literal `0` for zero `padding`, `margin`, and `gap`; use `var(--space-*)` for nonzero spacing. Reuse existing tokens first; add shared tokens when needed instead of using literal nonzero spacing values.
 - Example spacing scale (extend as needed): `--space-xs` (4px), `--space-sm` (8px), `--space-md` (16px), `--space-lg` (24px), `--space-xl` (32px), `--space-2xl` (48px).
