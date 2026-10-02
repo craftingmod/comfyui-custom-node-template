@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test"
+import Path from "node:path"
 
 import { getComfyUIPath, parseJsonc } from "@scripts/local-comfyui.ts"
 
@@ -29,8 +30,9 @@ describe("local ComfyUI configuration", () => {
   })
 
   test("prefers the command-line path over the environment", () => {
-    process.env.COMFYUI_PATH = "C:\\env-comfyui"
-    expect(getComfyUIPath(["--comfyui-path", "D:\\cli-comfyui"])).toBe("D:\\cli-comfyui")
+    process.env.COMFYUI_PATH = Path.resolve("env-comfyui")
+    const cliPath = Path.resolve("cli-comfyui")
+    expect(getComfyUIPath(["--comfyui-path", cliPath])).toBe(cliPath)
   })
 
   test("requires an absolute configured path", () => {
