@@ -36,4 +36,8 @@ includes = ["dist", "backend/_version.py"]
 path = "backend/_version.py"
 
 [dependency-groups]
-dev = ["pytest>=9.1.1", "pytest-xdist>=3.8.0", "ruff>=0.16.3"]
+dev = ["pytest>=9.1.1", "pytest-xdist>=3.8.0", "ruff>=0.16.3", "ty>=0.0.85"]
+
+[tool.ty.analysis]
+# ComfyUI supplies this API at runtime; pytest installs an in-memory test double.
+allowed-unresolved-imports = ["comfy_api.**"]
