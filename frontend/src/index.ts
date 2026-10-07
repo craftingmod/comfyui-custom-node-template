@@ -1,5 +1,4 @@
-import { createReactSidebar } from "@pages/react-sidebar.tsx"
-
+// init-template: optional React import
 import { app } from "../../scripts/app.js"
 import { PROJECT_ID, PROJECT_NAME, SETTINGS_IDS } from "./constants.ts"
 import { installStylesheet } from "./stylesheet.ts"
@@ -10,9 +9,7 @@ app.registerExtension({
   name: `${PROJECT_ID}.extension`,
   setup() {
     installStylesheet()
-    app.extensionManager.registerSidebarTab(
-      createReactSidebar(), // Replace this for native-DOM project
-    )
+    // init-template: optional React sidebar
   },
   settings: [
     {

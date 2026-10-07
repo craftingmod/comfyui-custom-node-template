@@ -38,7 +38,8 @@
     "test": "bun test:frontend && bun test:backend -v",
     "test:agent": "AGENT=1 bun test:frontend --only-failures && bun test:backend -q",
     "test:backend": "bun uv:local run pytest -p no:cacheprovider -n auto tests/python tests/backend",
-    "test:frontend": "bun test --preload ./frontend/test/setup.ts --parallel frontend/test",
+    "test:frontend": "bun test --preload ./frontend/test/setup.ts --parallel --path-ignore-patterns 'frontend/test/scripts/**' frontend/test",
+    "test:scripts": "bun test --parallel frontend/test/scripts",
     "test:unit": "bun scripts/ci-test.ts -- --no-dots",
     "test:watch": "bun test --preload ./frontend/test/setup.ts --watch frontend/test",
     "test:coverage": "bun test --preload ./frontend/test/setup.ts --coverage frontend/test",
@@ -52,18 +53,12 @@
     "validate:ci": "bun validate",
     "version:bump": "bun scripts/bump-version.ts"
   },
-  "dependencies": {
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0"
-  },
   "devDependencies": {
     "@comfyorg/comfyui-frontend-types": "1.47.12",
     "@happy-dom/global-registrator": "^20.14.5",
     "@tbela99/css-parser": "^1.6.5",
     "@tsconfig/bun": "^1.0.11",
     "@types/bun": "^1.4.2",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
     "fflate": "^0.8.3",
     "oxfmt": "^0.63.0",
     "oxlint": "^1.86.0",

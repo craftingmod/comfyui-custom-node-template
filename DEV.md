@@ -27,6 +27,10 @@ Run `bun run init:template`. It asks for:
 4. GitHub repository name
 5. Comfy Registry Publisher ID
 
+The interactive prompt then offers React with a default of No. For noninteractive
+initialization, keep the five metadata lines and pass `--react` to opt in, or add
+an optional sixth line containing `y`/`yes` or `n`/`no`.
+
 The ID sets the package name, frontend setting IDs, and example node namespace.
 The name sets the display labels and README title. It must be valid in a ZIP
 filename. Publisher ID is your Comfy Registry publisher,
@@ -91,8 +95,8 @@ staged before the swap, so a failed build leaves the installed package in place.
 
 - `backend/`: V3 nodes. Register them in `TemplateExtension.get_node_list()` in
   `backend/__init__.py`.
-- `frontend/src/components/`: reusable React components.
-- `frontend/src/pages/`: React roots, including pages, modals, and sidebars.
+- `frontend/src/components/`: reusable components (React when enabled).
+- `frontend/src/pages/`: UI roots, including optional React pages and sidebars.
 - `frontend/src/index.ts`: frontend extension registration.
 - `dist/`: generated frontend bundle.
 
@@ -100,9 +104,16 @@ The root `__init__.py` exposes `comfy_entrypoint()` and `WEB_DIRECTORY = "./dist
 
 See [docs/TESTING.md](docs/TESTING.md) for validation and runtime testing.
 
-## React UI
+## Optional React UI
 
-The example sidebar is in `frontend/src/pages/react-sidebar.tsx`. Replace it or
+React is omitted by default. Select it during `bun run init:template`, pass
+`bun run init:template --react` to select React without the interactive React
+question, or provide `y` as the optional sixth stdin line. The initializer adds
+React dependencies, JSX type configuration, the sidebar example, and its test;
+run `bun install` afterward. It copies example files only when their destinations
+do not exist.
+
+The sidebar example is in `frontend/src/pages/react-sidebar.tsx`. Replace it or
 remove its registration in `frontend/src/index.ts`.
 
 `@/` resolves to `frontend/src/` in TypeScript, Bun builds, and tests. For example,
@@ -131,9 +142,9 @@ button example. Pass composed class strings directly to React's `className`.
 
 ### Build
 
-React and ReactDOM are bundled into `dist/index.js`; `app` and `api` come from
-ComfyUI. `bun run build` uses React's production runtime. `bun run dev` uses the
-development runtime with source maps.
+When React is enabled, React and ReactDOM are bundled into `dist/index.js`; `app`
+and `api` come from ComfyUI. `bun run build` uses React's production runtime.
+`bun run dev` uses the development runtime with source maps.
 
 `typecheck`, `build`, and `dev` generate CSS declarations in `frontend/.generated/`.
 After adding or renaming classes while watching, run `bun run build:css-type`.

@@ -4,7 +4,6 @@
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ES2025"],
     "module": "ESNext",
-    "jsx": "react-jsx",
     "types": ["@comfyorg/comfyui-frontend-types"],
 
     "skipLibCheck": true,
