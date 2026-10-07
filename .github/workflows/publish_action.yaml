@@ -34,6 +34,9 @@ jobs:
       - name: Build frontend
         run: bun run build
 
+      - name: Use packaged metadata for Registry upload
+        run: unzip -p build/*.zip pyproject.toml > pyproject.toml
+
       - name: Publish Custom Node
         uses: Comfy-Org/publish-node-action@main
         with:
